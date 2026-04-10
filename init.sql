@@ -1,0 +1,2 @@
+-- Initial database setup (optional)
+-- Add any custom initialization SQL here
