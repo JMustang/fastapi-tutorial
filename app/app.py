@@ -47,13 +47,13 @@ async def upload_file(
         temp_file_obj = open(temp_file_path, "rb")
         file_data = temp_file_obj.read()
         temp_file_obj.close()
-        
+
         logger.info(f"Uploading file: {file.filename}")
         upload_result = imageKit.files.upload(
             file=file_data,
             file_name=file.filename,
             use_unique_file_name=True,
-            tags=["backend-upload"]
+            tags=["backend-upload"],
         )
 
         logger.info(f"Upload result type: {type(upload_result)}")
@@ -112,3 +112,22 @@ async def get_feed(session: AsyncSession = Depends(get_async_session)):
             }
         )
     return {"posts": post_data}
+
+
+@app.delete("/posts/{post_id}")
+async def delete_post(post_id: str, session: AsyncSession = Depends(get_async_session)):
+    try:
+        post_uuid = uuid.UUID(post_id)
+
+        result = await session.execute(select(Post).where(Post.id == post_uuid))
+        post = result.scalars().first()
+
+        if not post:
+            raise HTTPException(status_code=404, detail="❌ Post not found!")
+
+        await session.delete(post)
+        await session.commit()
+
+        return {"seccess": True, "message": "✅ Post deleted seccessfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"❌ Error deleting post: {str(e)}")
