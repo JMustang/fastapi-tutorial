@@ -128,6 +128,6 @@ async def delete_post(post_id: str, session: AsyncSession = Depends(get_async_se
         await session.delete(post)
         await session.commit()
 
-        return {"seccess": True, "message": "✅ Post deleted seccessfully!"}
+        return {"success": True, "message": "✅ Post deleted successfully!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Error deleting post: {str(e)}")
