@@ -10,6 +10,7 @@ import os
 import uuid
 import tempfile
 import logging
+from .users import auth_backend, current_active_user, fastapi_users
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,15 @@ async def lifesepan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifesepan)
+
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
+)
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
 
 
 @app.post("/upload")
