@@ -11,13 +11,11 @@ from datetime import datetime
 from fastapi_users.db import SQLAlchemyUserDatabase, SQLAlchemyBaseUserTableUUID
 from fastapi import Depends
 
-DATABASE_URL = "sqlite+aiosqlite:///./test.db"
-
-# load_dotenv()
-# DATABASE_URL = os.getenv(
-#     "DATABASE_URL",
-#     "postgresql+asyncpg://fastapi_user:fastapi_password@localhost:5432/fastapi_db",
-# )
+load_dotenv()
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "sqlite+aiosqlite:///./test.db",
+)
 
 
 class Base(DeclarativeBase):
@@ -39,7 +37,7 @@ class Post(Base):
     file_name = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user = relationship("User", back_populates="posrs")
+    user = relationship("User", back_populates="post")
 
 
 engine = create_async_engine(DATABASE_URL, echo=True)
